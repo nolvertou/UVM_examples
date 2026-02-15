@@ -42,6 +42,6 @@ This example covers the following UVM concepts:
 
 ## Block Diagram
 <p align="center">
-  <img src="[images/virtual_sequencer_arch.png](https://github.com/nolvertou/UVM_examples/blob/66da791270c309f7680e8d37f36668931a15ea92/virtual_sequencer/virtual_sequencer_example1/virtual_sequencer_block_diagram1.png)" width="600"/>
+  <img src="virtual_sequencer/virtual_sequencer_example1/virtual_sequencer_block_diagram1.png" width="600"/>
 </p>
 
