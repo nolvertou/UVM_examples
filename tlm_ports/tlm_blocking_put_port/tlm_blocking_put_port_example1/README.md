@@ -44,86 +44,75 @@ consumer completes the `put()` task.
 
 ## 📁 File Description
 
+This example is organized into multiple SystemVerilog files, each representing a standard UVM component. The goal is to clearly demonstrate how blocking put communication is implemented and connected inside a UVM environment.
+
+---
+
 ### `producer.sv`
 
-The producer is responsible for sending data.
+The producer is responsible for generating and sending data to another component using a blocking TLM interface.
 
-Key responsibilities:
+Responsibilities:
 
 - Declares a `uvm_blocking_put_port`
-- Generates data
-- Calls `put()` to send the transaction
-- Waits until the consumer finishes processing
+- Generates transaction data
+- Calls the `put()` method to send data
+- Waits until the consumer finishes processing the transaction
 
-Important code:
+The producer does not know which component receives the data. It only interacts through the TLM interface.
 
-```systemverilog
-uvm_blocking_put_port #(int) send;
-send.put(data);
+---
 
+### `consumer.sv`
 
-The producer does not know who receives the transaction.
-It only knows that a put() interface exists.
-
-consumer.sv
-
-The consumer receives and processes the transaction.
-
-Key responsibilities:
-
-Declares a blocking put export
-
-Implements the blocking put interface using uvm_blocking_put_imp
-
-Defines the put() task
-
-Important code:
-
-uvm_blocking_put_imp #(int, consumer) imp;
-
-task put(int data);
-  // Transaction processing
-endtask
-
-
-The consumer controls when the blocking operation ends.
-
-env.sv
-
-The environment instantiates and connects the producer and consumer.
+The consumer receives and processes the transaction sent by the producer.
 
 Responsibilities:
 
-Creates producer and consumer components
+- Declares a `uvm_blocking_put_export`
+- Implements the blocking put interface using `uvm_blocking_put_imp`
+- Defines the `put()` task where the transaction is handled
 
-Connects TLM interfaces during connect_phase
+The consumer controls when the blocking operation ends because the producer resumes execution only after this task completes.
 
-Connections:
+---
 
-p.send.connect(c.recv);
-c.recv.connect(c.imp);
+### `env.sv`
 
-
-This creates the communication path between components.
-
-test.sv
-
-The test creates the environment and starts the simulation.
+The environment instantiates and connects all components required for communication.
 
 Responsibilities:
 
-Instantiates the environment
+- Creates the producer and consumer components
+- Connects TLM ports, exports, and implementations in the `connect_phase`
+- Defines the communication path between components
 
-Relies on UVM phases to execute the test
+This file represents the structural integration layer of the testbench.
 
-tb.sv
+---
 
-Top-level testbench module.
+### `test.sv`
+
+The test is the top-level UVM test class.
 
 Responsibilities:
 
-Imports UVM package
+- Instantiates the environment
+- Starts the UVM test execution
+- Relies on UVM phases to run the simulation
 
-Includes all component files
+The test itself contains minimal logic since the focus of this example is TLM communication.
 
-Calls run_test() to start simulation
+---
+
+### `tb.sv`
+
+The top-level testbench module.
+
+Responsibilities:
+
+- Imports the UVM package
+- Includes all SystemVerilog files
+- Calls `run_test()` to start simulation
+
+This module serves as the simulation entry point.
